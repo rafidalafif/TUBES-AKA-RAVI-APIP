@@ -1,0 +1,68 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+	"strings"
+	"time"
+)
+
+// generateSongTitles generates a list of song titles based on the input count
+func generateSongTitles(n int) []string {
+	var songs []string
+	for i := 1; i <= n; i++ {
+		songs = append(songs, fmt.Sprintf("Song %d", i))
+	}
+	return songs
+}
+
+// linearSearch performs a linear search on the song list
+func linearSearch(songs []string, target string) int {
+	for i, song := range songs {
+		if song == target {
+			return i
+		}
+	}
+	return -1
+}
+
+// binarySearch performs a binary search on the song list
+func binarySearch(songs []string, target string) int {
+	left, right := 0, len(songs)-1
+	for left <= right {
+		mid := left + (right-left)/2
+		if songs[mid] == target {
+			return mid
+		} else if songs[mid] < target {
+			left = mid + 1
+		} else {
+			right = mid - 1
+		}
+	}
+	return -1
+}
+
+func main() {
+	// Generate dataset with a minimum of 300 songs
+	const songCount = 500 // Change as needed
+	songs := generateSongTitles(songCount)
+	target := "Song 20" // The song we are searching for
+
+	// Linear search
+	start := time.Now()
+	linearIndex := linearSearch(songs, target)
+	linearDuration := time.Since(start)
+	fmt.Printf("Linear Search Result: Index = %d, Duration = %.10f seconds\n",
+		linearIndex, linearDuration.Seconds())
+
+	// Binary search (requires sorted data)
+	sort.Slice(songs, func(i, j int) bool {
+		return strings.Compare(songs[i], songs[j]) < 0
+	})
+
+	start = time.Now()
+	binaryIndex := binarySearch(songs, target)
+	binaryDuration := time.Since(start)
+	fmt.Printf("Binary Search Result: Index = %d, Duration = %.10f seconds\n",
+		binaryIndex, binaryDuration.Seconds())
+}
